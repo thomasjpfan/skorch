@@ -14,7 +14,7 @@ install:
   - bash $HOME/miniconda.sh -b -p $HOME/miniconda
 
   # rsync cached bz2 files to $HOME/miniconda/pkgs
-  - rsync -zav --include="*/" --include="*.bz2" --exclude="*" $HOME/miniconda_cache/ $HOME/miniconda/pkgs/
+  - rsync -zav $HOME/miniconda_cache/ $HOME/miniconda/pkgs/
 
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
@@ -29,6 +29,7 @@ install:
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 before_cache:
   # rsync bz2 files to cache
-  - rsync -zav --include="*/" --include="*.bz2" --exclude="*" $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
+  - rsync -zav --include="*/" --include="*.bz2" --include="urls.txt" \
+    --include="urls" --exclude="*" --delete $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
 script:
   - pytest
