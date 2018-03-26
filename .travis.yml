@@ -3,7 +3,6 @@ python:
   - "3.6"
 cache:
   apt: true
-  pip: true
   timeout: 1000
   directories:
     - $HOME/miniconda/pkgs/
