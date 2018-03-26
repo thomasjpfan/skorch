@@ -27,7 +27,7 @@ install:
   - conda install --file=requirements-dev.txt
   - python setup.py install
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
-
+before_cache:
   # rsync bz2 files to cache
   - rsync -zav --include="*/" --include="*.bz2" --exclude="*" $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
 script:
