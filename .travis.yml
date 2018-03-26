@@ -13,8 +13,8 @@ install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda.sh;
   - bash $HOME/miniconda.sh -b -p $HOME/miniconda
 
-  # copy cached bz2 files to $HOME/miniconda/pkgs
-  - cp -v $HOME/miniconda_cache/*.bz2 $HOME/miniconda/pkgs
+  # rsync cached bz2 files to $HOME/miniconda/pkgs
+  - rsync -zav --include="*.bz2" --exclude="*" $HOME/miniconda_cache $HOME/miniconda/pkgs
 
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
@@ -29,6 +29,6 @@ install:
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 
   # copy bz2 files to cache
-  - cp -v $HOME/miniconda/pkgs/*.bz2 $HOME/miniconda_cache/*.bz2
+  - rsync -zav --include="*.bz2" --exclude="*" $HOME/miniconda/pkgs $HOME/miniconda_cache
 script:
   - pytest
