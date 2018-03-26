@@ -18,7 +18,7 @@ install:
   - >
     for i in $HOME/miniconda/pkgs/*.tar.bz2; do
       FOLDER=$(echo $(basename $i) | cut -d '.' -f 1);
-      mkdir $FOLDER && tar xjf $i -C $FOLDER;
+      mkdir -p $FOLDER && tar xjf $i -C $FOLDER;
     done
 
   - export PATH="$HOME/miniconda/bin:$PATH"
