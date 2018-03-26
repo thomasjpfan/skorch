@@ -17,6 +17,7 @@ install:
   - rsync -zav $HOME/miniconda_cache/ $HOME/miniconda/pkgs/
   - >
     for i in $HOME/miniconda/pkgs/*.tar.bz2; do
+      echo "Uncompressing $i"
       FOLDER=$(echo $(basename $i) | cut -d '.' -f 1);
       mkdir -p $FOLDER && tar xjf $i -C $FOLDER;
     done
