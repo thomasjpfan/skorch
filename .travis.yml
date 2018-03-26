@@ -3,16 +3,15 @@ python:
   - "3.6"
 cache:
   apt: true
+  pip: true
   timeout: 1000
   directories:
-    - $HOME/.cache/pip
     - $HOME/miniconda/pkgs/
 install:
   - sudo apt-get update
 
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda.sh;
   - bash $HOME/miniconda.sh -b -u -p $HOME/miniconda
-
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
@@ -26,5 +25,6 @@ install:
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 before_cache:
   - rm $HOME/miniconda/pkgs/*.tar.bz2
+  - rm $HOME/miniconda/pkgs/urls.txt
 script:
   - pytest
