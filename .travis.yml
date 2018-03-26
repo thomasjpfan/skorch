@@ -23,12 +23,14 @@ install:
   - conda info -a
 
   - conda env create -q -n skorch-env -f environment.yml
+  - ls $HOME/miniconda/pkgs
   - source activate skorch-env
   - conda install --file=requirements-dev.txt
   - python setup.py install
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 
   # copy bz2 files to cache
+  - ls $HOME/miniconda/pkgs
   - rsync -zav --include="*.bz2" --exclude="*" $HOME/miniconda/pkgs $HOME/miniconda_cache
 script:
   - pytest
