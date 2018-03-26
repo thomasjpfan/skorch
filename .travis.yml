@@ -13,15 +13,6 @@ install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda.sh;
   - bash $HOME/miniconda.sh -b -p $HOME/miniconda
 
-  # rsync cached bz2 files to $HOME/miniconda/pkgs
-  - rsync -zav $HOME/miniconda_cache/ $HOME/miniconda/pkgs/
-  - >
-    for i in $HOME/miniconda/pkgs/*.tar.bz2; do
-      echo "Uncompressing $i"
-      FOLDER=$(echo $(basename $i) | cut -d '.' -f 1);
-      mkdir -p $FOLDER && tar xjf $i -C $FOLDER;
-    done
-
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
@@ -30,11 +21,18 @@ install:
 
   - conda env create -q -n skorch-env -f environment.yml
   - source activate skorch-env
+
+  # Install from cache first
+  - >
+    for i in $HOME/miniconda_cache/*.tar.bz2; do
+      echo "conda install $i"
+      conda install $i
+    done
   - conda install --file=requirements-dev.txt
   - python setup.py install
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 before_cache:
-  # rsync bz2 files to cache
-  - rsync -zav --include="urls*" --include="*.tar.bz2" --exclude="*" --delete $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
+  # rsync tar.bz2 files to cache
+  - rsync -zav --include="*.tar.bz2" --exclude="*" --delete $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
 script:
   - pytest
