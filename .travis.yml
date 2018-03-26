@@ -25,6 +25,7 @@ install:
   - python setup.py install
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 before_cache:
-  - rm $HOME/miniconda/pkgs/*.tar.bz2
+  # Delete folders, while leaving `.tar.bz2` files alone
+  - find $HOME/miniconda/pkgs -maxdepth 1 -type d -not -path "$HOME/miniconda/pkgs" -print0  | xargs -0 rm -rf
 script:
   - pytest
