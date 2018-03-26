@@ -6,13 +6,12 @@ cache:
   timeout: 1000
   directories:
     - $HOME/.cache/pip
-    - $HOME/miniconda_cache
+    - $HOME/miniconda/pkgs/
 install:
   - sudo apt-get update
 
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/miniconda.sh;
-  - bash $HOME/miniconda.sh -b -p $HOME/miniconda
-
+  - bash $HOME/miniconda.sh -b -u -p $HOME/miniconda
 
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
@@ -20,16 +19,12 @@ install:
   - conda update -q conda
   - conda info -a
 
-  # rsync cached bz2 files to $HOME/miniconda/pkgs
-  - rsync -zav $HOME/miniconda_cache/ $HOME/miniconda/pkgs/
-
   - conda env create -q -n skorch-env -f environment.yml
   - source activate skorch-env
   - conda install --file=requirements-dev.txt
   - python setup.py install
   - conda install -c pytorch 'pytorch-cpu>=0.3.0'
 before_cache:
-  # rsync bz2 files to cache
-  - rsync -zav --include="urls*" --include="*.tar.bz2" --exclude="*" --delete $HOME/miniconda/pkgs/ $HOME/miniconda_cache/
+  - rm $HOME/miniconda/pkgs/*.tar.bz2
 script:
   - pytest
