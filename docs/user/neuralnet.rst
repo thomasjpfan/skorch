@@ -15,7 +15,7 @@ criterion.  Finally, you can call :func:`~skorch.net.NeuralNet.fit`
 and :func:`~skorch.net.NeuralNet.predict`, as with an sklearn
 estimator. The finished code could look something like this:
 
-.. code:: python
+.. code-block:: python
 
     class MyModule(torch.nn.Module):
         ...
