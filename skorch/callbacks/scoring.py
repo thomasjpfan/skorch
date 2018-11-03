@@ -187,7 +187,7 @@ class BatchScoring(ScoringBase):
     # pylint: disable=unused-argument,arguments-differ
 
     def on_batch_end(self, net, X, y, training, **kwargs):
-        if training != self.on_train:
+        if training != self.on_train or self.scorer_ is None:
             return
 
         y_preds = [kwargs['y_pred']]
@@ -195,10 +195,10 @@ class BatchScoring(ScoringBase):
             # In case of y=None we will not have gathered any samples.
             # We expect the scoring function to deal with y=None.
             y = None if y is None else self.target_extractor(y)
-            score = self._scoring(cached_net, X, y)
-            if score is None:
-                return
-            cached_net.history.record_batch(self.name_, score)
+
+            with suppress(KeyError):
+                score = self._scoring(cached_net, X, y)
+                cached_net.history.record_batch(self.name_, score)
 
     def get_avg_score(self, history):
         if self.on_train:
