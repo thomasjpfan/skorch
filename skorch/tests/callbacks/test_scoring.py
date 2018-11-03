@@ -485,7 +485,7 @@ class TestEpochScoring:
         X, y = classifier_data
         net = NeuralNetClassifier(
             classifier_module,
-            callbacks=[MyScoring(scoring=None)],
+            callbacks=[MyScoring(scoring='accuracy')],
             max_epochs=1,
         )
         net.fit(X, y)
