@@ -101,6 +101,10 @@ class ScoringBase(Callback):
     def on_train_begin(self, net, X, y, **kwargs):
         self.X_indexing_ = check_indexing(X)
         self.y_indexing_ = check_indexing(y)
+        try:
+            self.scorer_ = check_scoring(net, self.scoring_)
+        except TypeError:
+            self.scorer_ = None
 
         # Looks for the right most index where `*_best` is True
         # That index is used to get the best score in `net.history`
@@ -113,12 +117,13 @@ class ScoringBase(Callback):
     def _scoring(self, net, X_test, y_test):
         """Resolve scoring and apply it to data. Use cached prediction
         instead of running inference again, if available."""
-        scorer = check_scoring(net, self.scoring_)
+        if self.scorer_ is None:
+            return
         scores = _score(
             estimator=net,
             X_test=X_test,
             y_test=y_test,
-            scorer=scorer,
+            scorer=self.scorer_,
             is_multimetric=False,
         )
         return scores
@@ -190,11 +195,10 @@ class BatchScoring(ScoringBase):
             # In case of y=None we will not have gathered any samples.
             # We expect the scoring function to deal with y=None.
             y = None if y is None else self.target_extractor(y)
-            try:
-                score = self._scoring(cached_net, X, y)
-                cached_net.history.record_batch(self.name_, score)
-            except KeyError:
-                pass
+            score = self._scoring(cached_net, X, y)
+            if score is None:
+                return
+            cached_net.history.record_batch(self.name_, score)
 
     def get_avg_score(self, history):
         if self.on_train:
